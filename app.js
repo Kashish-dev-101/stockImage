@@ -134,6 +134,11 @@ for (let category of categoryBar){
     console.log(category);
     category.addEventListener("click", async()=>{
     
+    categoryBar.forEach((btn) => {
+        btn.classList.remove("active")}
+        );
+
+    category.classList.add("active");
     const categoryText = category.innerText.trim();
       
     const categoryImageData = await fetch(`https://api.unsplash.com/search/photos?query=${categoryText}&per_page=20&client_id=qEJS3_uc9Y5N_fd5ia0YQxM3hkwg7PrjfSphgZ3aJvo`);
