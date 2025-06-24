@@ -25,14 +25,45 @@ searchBtn.addEventListener("click", async()=>{
 
     imgSection.innerHTML = "";
 
-    for (let imageData of imageSearchResponse.results){
-        console.log(imageData);
-        console.log(imageData.urls.regular);
+    for (let photo of imageSearchResponse.results){
+        console.log(photo);
+        console.log(photo.urls.regular);
+
         const imgCard = document.createElement("div");
+        imgCard.classList.add("image-card");
+
         const imgEle = document.createElement("img");
-        imgSection.append(imgCard );
+        imgEle.src = photo.urls.regular;
+        imgEle.alt = photo.alt_description || "Unsplash image";
+
+        const overlay = document.createElement("div");
+        overlay.classList.add("overlay");
+
+        // photographer 
+
+        const photographer = document.createElement("div");
+        photographer.classList.add("photographer");
+
+
+        // Download Button 
+
+        const downloadBtn = document.createElement("button");
+        downloadBtn.classList.add("download-btn");
+        downloadBtn.textContent = "⬇️";
+
+        downloadBtn.addEventListener("click", async()=>{
+            //await fetch(`${photo.links.download_location}?client_id=qEJS3_uc9Y5N_fd5ia0YQxM3hkwg7PrjfSphgZ3aJvo`);
+            window.open(photo.links.download, "_blank");  
+        });
+
+        overlay.append(photographer);
+        overlay.append(downloadBtn);
+
+        imgCard.append(overlay);
         imgCard.append(imgEle);
-        imgEle.src = imageData.urls.regular;
+        imgSection.append(imgCard );
+        
+        
     }
 
 })
