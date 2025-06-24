@@ -127,7 +127,7 @@ body {
 .image-container img {
   width: 100%;
   height: 240px;
-  object-fit: cover;
+  object-fit: fill;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
@@ -244,13 +244,21 @@ body {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  height: 70px; /* Make overlay taller */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.4)); /* Stronger gradient */
   color: white;
-  padding: 12px;
+  padding: 14px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
+
+.image-card:hover .overlay {
+  opacity: 1;
+}
+
 
 .photographer {
   display: flex;
@@ -283,3 +291,42 @@ body {
   cursor: pointer;
   color: black;
 }
+
+.category-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 16px 0;
+  margin: 0 auto 30px;
+  border-bottom: 1px solid #ddd;
+  scrollbar-width: none;
+}
+
+.category-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.category {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #444;
+  cursor: pointer;
+  padding-bottom: 6px;
+  white-space: nowrap;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.category:hover {
+  color: #007bff;
+}
+
+.category.active {
+  color: #000;
+  font-weight: 600;
+  border-bottom: 2px solid #000;
+}
+
