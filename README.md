@@ -1,3 +1,4 @@
+
 # PixelFind — Stock Image Search App
 
 A stock image search app powered by the Unsplash API with image optimization and delivery through ImageKit.
