@@ -1,105 +1,68 @@
-# Stock Image Finder (Unsplash API Demo)
 
-Live demo: https://kashish-dev-101.github.io/stockImage/
+# PixelFind — Stock Image Search App
 
-A lightweight stock image web app built to demonstrate how to consume an external REST API (Unsplash), process the response, and render results dynamically on a single page using vanilla JavaScript.
-
-This project focuses on practical API integration patterns (fetch, async/await, DOM rendering, event driven UI). In the next iteration, I plan to integrate ImageKit for image optimization and faster delivery.
+A stock image search app powered by the Unsplash API with image optimization and delivery through ImageKit.
 
 ## Features
 
-1. Random image feed on page load  
-   Fetches 50 random images from Unsplash and renders them as cards.
-
-2. Keyword search  
-   Users can type a query and load 20 matching images using the Unsplash Search API.
-
-3. Category based browsing  
-   Clicking a category button triggers a search using that category keyword and updates the grid.
-
-4. Interactive image cards  
-   Each image renders inside a card with an overlay and a download button.
-
-5. Download flow  
-   The download button opens the Unsplash download link in a new tab.
+- **Search** — Search millions of free photos from Unsplash
+- **Category browsing** — Quick-access category tabs (Nature, Travel, Architecture, etc.)
+- **Random photos** — Loads 50 random photos on page load
+- **Image optimization** — All images served through ImageKit CDN with automatic format conversion (WebP/AVIF) and quality optimization
+- **Responsive images** — `srcset` and `sizes` attributes generated via ImageKit JS SDK so the browser picks the optimal image size for each viewport
+- **Performance** — `fetchpriority="high"` on above-the-fold images for faster LCP, `loading="lazy"` on everything below
+- **Masonry layout** — CSS columns-based grid that adapts from 4 columns on desktop down to 1 on mobile
+- **Download** — Hover overlay with a download button linking to Unsplash's download endpoint
 
 ## Tech Stack
 
-1. HTML
-2. CSS
-3. JavaScript (vanilla)
-4. Unsplash REST API
+- Vanilla HTML, CSS, JavaScript (no frameworks)
+- [Unsplash API](https://unsplash.com/developers) — photo data
+- [ImageKit JS SDK](https://imagekit.io/docs/javascript-sdk) — image URL construction, responsive image attributes, CDN delivery
 
-## How it works (high level)
+## Project Structure
 
-1. On initial page load (DOMContentLoaded), the app requests a random image batch and renders it.
-2. When the user clicks the search button, the app calls the search endpoint using the typed keyword and re renders the grid.
-3. When the user clicks a category, the app calls the same search endpoint with the category label and re renders the grid.
-4. Images are rendered using JavaScript DOM APIs (createElement, classList, append), not template strings.
+```
+stockImage/
+├── index.html          # Page structure — navbar, hero banner, category bar, image grid
+├── style.css           # Styling — masonry columns, responsive breakpoints, hover overlays
+├── app.js              # App logic — API calls, image card creation, ImageKit integration
+├── config.js           # API keys (gitignored)
+└── config.example.js   # Template for config.js
+```
 
-## API Endpoints Used
+## Setup
 
-1. Random Photos  
-   GET https://api.unsplash.com/photos/random?count=50&client_id=YOUR_ACCESS_KEY
+1. Copy the config template and add your API keys:
+   ```bash
+   cp config.example.js config.js
+   ```
 
-2. Search Photos  
-   GET https://api.unsplash.com/search/photos?query=KEYWORD&per_page=20&client_id=YOUR_ACCESS_KEY
+2. Edit `config.js` with your credentials:
+   - **Unsplash Access Key** — get one at [unsplash.com/developers](https://unsplash.com/developers)
+   - **ImageKit URL Endpoint** — from your [ImageKit dashboard](https://imagekit.io/dashboard)
 
-## Project Structure (typical)
+3. Open `index.html` in a browser (or use a local server like `npx serve`).
 
-1. index.html  
-   Page layout, search input, category bar, container for images
+## How ImageKit Integration Works
 
-2. style.css  
-   Grid layout, card styles, overlay styling, responsive UI
+Images are fetched from Unsplash's API, but instead of using Unsplash URLs directly, they're routed through ImageKit's CDN:
 
-3. script.js  
-   API calls, event listeners, DOM rendering logic
+1. **URL construction** — `ImageKit.buildSrc()` wraps the Unsplash raw URL with ImageKit transforms (`format: auto`, `quality: 80`)
+2. **Responsive attributes** — `ImageKit.getResponsiveImageAttributes()` generates a full `srcset` with multiple width variants (256w through 3840w) so the browser downloads only the size it needs
+3. **`sizes` attribute** — Matches the CSS column layout breakpoints so the browser can calculate the correct image width before downloading
 
-## Running locally
+This means every image gets automatic WebP/AVIF conversion, quality optimization, and CDN caching — without changing the Unsplash source.
 
-1. Clone the repository
-2. Open the project folder
-3. Run using any local server (recommended)  
-   Example: VS Code Live Server
-4. Open index.html in the browser
+## CSS Layout
 
-## Configuration (important)
+The image grid uses CSS `columns` for a masonry-style layout:
 
-Right now, the Unsplash access key is used directly in the fetch URL as client_id.
+| Viewport | Columns |
+|----------|---------|
+| > 1200px | 4 |
+| 900–1200px | 3 |
+| 540–900px | 2 |
+| < 540px | 1 |
 
-For a cleaner and safer approach, move the key into a separate config file or environment based setup (especially if you later add a backend). For a simple front end only demo, a common approach is:
-
-1. Create a file named config.js
-2. Store your access key there
-3. Reference it in script.js when building the request URL
-
-## Notes about Unsplash guidelines
-
-If you expand this project, consider using the official download tracking endpoint (download_location) before redirecting users to the final download, as recommended by Unsplash API guidelines.
-
-## Next Improvements (planned)
-
-1. ImageKit integration for optimization  
-   Deliver resized and compressed images  
-   Automatic modern formats where applicable  
-   Better performance on slower networks
-
-2. Better UX  
-   Loading states (skeletons)  
-   Empty state when no results are found  
-   Error handling UI for API failures
-
-3. Pagination or infinite scroll  
-   Improve browsing for large result sets
-
-4. Photographer credits  
-   Display photographer name and link to the profile
-
-## Credits
-
-Images provided by Unsplash via the Unsplash API.
-
-## License
-
-This project is for learning and demo purposes. Add a license file if you plan to make it reusable as a template.
+Each image card is a 1:1 square (`aspect-ratio: 1/1`) with `object-fit: cover`.
